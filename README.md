@@ -12,7 +12,7 @@ Normal people will see cryptic chars, you will see the secret message.
 ## Installation
 
 1. Download [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/) on Firefox or [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) for Chromium base browsers *(Chrome, Vivaldi, Edge, Brave,...)*
-2. Install the script by clicking [`this link`](twitchCyperKeyboard.user.js)
+2. Install the script by clicking [`this link`](https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js)
 3. Go on a Twitch channel, you should be asked to set the **cypher key**. Set anything you want but keep it somewhere to share it with your friends !
 <br>
 <br>
