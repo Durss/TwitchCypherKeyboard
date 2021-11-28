@@ -1,7 +1,7 @@
 # Cypher keyboard for Twitch
 
-This script allows you to send secret messages publicly on a Twitch chat.
-Normal people will see cryptic chars, you will see the secret message.
+This script allows you to send secret messages publicly on a Twitch chat.\
+Normal people will see cryptic messages, you will see the secret message clear.
 
 <div align="center"><img src="demo.gif" alt="demo" /></div>
 
