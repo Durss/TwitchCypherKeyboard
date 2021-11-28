@@ -17,6 +17,7 @@ Normal people will see cryptic chars, you will see the secret message.
 <br>
 <br>
 <br>
+
 ## Configuration
 Once you installed the script this will be displayed on chat :
 <div align="center"><img src="config.png" alt="config" /></div>
