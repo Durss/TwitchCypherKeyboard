@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name        Clavier de chiffrement
+// @name        Twitch Cypher Keyboard
 // @namespace   https://www.twitch.tv/
-// @description Permet de chiffrer/déchiffrer des messages sur le tchat Twitch de la chaîne de Durss
+// @description Allows to send cyphered messages on any Twitch chat
 // @include     https://www.twitch.tv/*
+// @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
 // @version     1
 // @author      Durss
 // @grant       GM_getValue
