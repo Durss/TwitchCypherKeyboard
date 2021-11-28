@@ -282,7 +282,7 @@
     async function onSubmit(e) {
         alertDiv.style.display = "none";
 
-        if(chatInput.value == "!resetCypherKeyboard") {
+        if(chatInput.value.toLowerCase() == "!resetcypherkeyboard") {
             GM_setValue("cypherKey", null);
             cypherEnabled = false;
             e.preventDefault();

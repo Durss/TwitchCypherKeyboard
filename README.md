@@ -21,3 +21,12 @@ Normal people will see cryptic chars, you will see the secret message.
 Once you installed the script this will be displayed on chat :
 <div align="center"><img src="config.png" alt="config" /></div>
 Write any secret key you want in the field and share it with the people you want to exchange secret messages with.
+<br>
+<br>
+<br>
+
+## Change cypher key
+If you want to update the cypher key you can send this command to reset the extension :
+```
+!resetCypherKeyboard
+```
