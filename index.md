@@ -1,37 +1,16 @@
-## Welcome to GitHub Pages
+# Clavier de chiffrement
 
-You can use the [editor on GitHub](https://github.com/Durss/TwitchCypherKeyboard/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Installation
+Pour utiliser le clavier, il te faudra installer [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) si tu es sur Chrome, Edge, Vivaldi, Opera, Brave, ou [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/) si tu es sur Firefox.\
+Clique ensuite sur [`ce lien`](https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js) pour installer le clavier de chiffrement.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Configuration
+Une fois installé, rends-toi sur Twitch et tu verras un formulaire s'afficher au-dessus du champs de saisie du chat.\
+Entre la clef secrète qui t'a été communiquée et valide.
+<div align="center"><img src="https://github.com/Durss/TwitchCypherKeyboard/blob/main/config.png" alt="config" /></div>
 
-### Markdown
+## Utilisation
+Une fois la clef secrète configurée, une icône de cadenas apparaîtra sur la droite.\
+En cliquant dessus le chiffrement sera activé et tes messages deviendront lisibles uniquement aux personnes ayant aussi installé le clavier et configuré la même clef secrète
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Durss/TwitchCypherKeyboard/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+<div align="center"><img src="https://github.com/Durss/TwitchCypherKeyboard/blob/main/demo.gif" alt="demo" /></div>
