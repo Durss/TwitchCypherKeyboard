@@ -1,5 +1,5 @@
 ## Installation
-Pour utiliser le clavier, il te faudra installer [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) si tu es sur Chrome, Edge, Vivaldi, Opera, Brave, ou [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/) si tu es sur Firefox.\
+Pour utiliser le clavier, il te faudra installer [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) si tu es sur **Chrome, Edge, Vivaldi, Opera, Brave**, ou [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/) si tu es sur **Firefox**.\
 Clique ensuite sur [`ce lien`](https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js) pour installer le clavier de chiffrement.
 
 ## Configuration
