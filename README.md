@@ -27,7 +27,7 @@ Write any secret key you want in the field and share it with the people you want
 <br>
 
 ## Change cypher key
-If you want to update the cypher key you can send this command to reset the extension :
+If you want to update the cypher key you can send this command in the chat field to reset the extension :
 ```
 !resetCypherKeyboard
 ```
