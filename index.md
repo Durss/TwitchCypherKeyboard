@@ -2,7 +2,7 @@
 Si tu es sur **Chrome, Edge, Vivaldi, Opera, Brave**, installe [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)\
 Si tu es sur **Firefox**, installe [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/)\
 \
-Une fois fait, installe le clavier en cliquant sur [`ce lien`](https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js)
+Une fois fait, installe le clavier en cliquant sur [ce lien](https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js)
 
 ## Configuration
 Rends-toi sur Twitch, tu verras un formulaire s'afficher au-dessus du champs de saisie du chat.\
