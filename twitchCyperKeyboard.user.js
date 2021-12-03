@@ -247,6 +247,7 @@
     function initChatWatcher() {
         chatMessages.addEventListener("DOMNodeInserted", async (e) => {
             let div = e.target;
+            if(!div) return;//For some reason it can be null...
             let body = div.querySelector("[data-test-selector='chat-line-message-body']");
             let messages = div.querySelectorAll("[data-a-target='chat-message-text']");
             let message = "";
