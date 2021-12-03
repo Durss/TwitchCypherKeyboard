@@ -4,7 +4,7 @@
 // @description Allows to send cyphered messages on any Twitch chat
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.1
+// @version     1.2
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
