@@ -127,7 +127,7 @@
                 background-color: var(--color-brand-accent-cherry);
             }
 
-            input[type='text'] {
+            .config>input[type='text'] {
                 border-style: solid;
                 border-width: var(--border-width-input);
                 border-color: var(--color-border-input);
@@ -139,11 +139,11 @@
                 border-radius:5px
             }
 
-            input[type='text']::placeholder {
+            .config>input[type='text']::placeholder {
                 color:var(--color-text-button-secondary-hover);
             }
 
-            input[type="submit"] {
+            .config>input[type="submit"] {
                 border:none;
                 padding: 0 10px;
                 background-color: var(--color-background-button-primary-default);
