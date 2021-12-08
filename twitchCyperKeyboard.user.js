@@ -4,7 +4,7 @@
 // @description Allows to send cyphered messages on any Twitch chat
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.3
+// @version     1.4
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -16,6 +16,8 @@
     let toolsHolder = null;
     let alertHolder = null;
     let toggleButton = null;
+    let toggleButtonImg = null;
+    let initForm = null;
     let alertDiv = null;
     let chatInput = null;
     let chatMessages = null;
@@ -33,34 +35,39 @@
 
 	async function buildDOM () {
         cypherKey = GM_getValue("cypherKey");
-        toolsHolder = document.querySelector("[data-a-target='emote-picker-button']").parentElement.parentElement;
-        alertHolder = document.querySelector("[data-test-selector='chat-input-buttons-container']").parentElement.firstChild.firstChild;
-        chatInput = document.querySelector("[data-a-target='chat-input']");
-        chatMessages = document.querySelector("[data-test-selector='chat-scrollable-area__message-container']");
-        submitBt = document.querySelector("[data-a-target='chat-send-button']");
+
+        initPointers();
         addStyles();
+
         if(cypherKey) {
             addToggle();
             addMaxLength();
 
             if(!listenersAdded) {
                 initChatWatcher();
-
-                chatInput.addEventListener("keydown", e=> {
-                    if(e.key == "Enter") onSubmit(e);
-                }, true);
-
-                chatInput.addEventListener("focus", e=>{
-                    //Reduce input size so it doesn't overlap with buttons
-                    chatInput.style.paddingRight = (.5+toolsHolder.childElementCount*3)+"rem";
-                });
-                //Capture click on "chat" button to override its behavior
-                submitBt.addEventListener("click", e=>{ onSubmit(e); });
+                initChatInputListeners();
             }
             listenersAdded = true;
         }else{
             addInitForm();
         }
+
+        let prevURL = document.location.href;
+        setInterval(_=> {
+            if(prevURL != document.location.href) {
+                prevURL = prevURL = document.location.href;
+                initPointers();
+                if(cypherKey) {
+                    cypherEnabled = false;
+                    initChatWatcher();
+                    initChatInputListeners();
+                    toolsHolder.appendChild(toggleButton);
+                    toggleCyphering(cypherEnabled);
+                }else{
+                    alertHolder.appendChild(initForm);
+                }
+            }
+        }, 1000);
 
         /*
         var res = await encrypt("wesh decode toi pt1 !!");
@@ -69,6 +76,27 @@
         console.log(res);
         */
 	}
+
+    function initPointers() {
+        toolsHolder = document.querySelector("[data-a-target='emote-picker-button']").parentElement.parentElement;
+        alertHolder = document.querySelector("[data-test-selector='chat-input-buttons-container']").parentElement.firstChild.firstChild;
+        chatInput = document.querySelector("[data-a-target='chat-input']");
+        chatMessages = document.querySelector("[data-test-selector='chat-scrollable-area__message-container']");
+        submitBt = document.querySelector("[data-a-target='chat-send-button']");
+    }
+
+    function initChatInputListeners() {
+        chatInput.addEventListener("keydown", e=> {
+            if(e.key == "Enter") onSubmit(e);
+        }, true);
+
+        chatInput.addEventListener("focus", e=>{
+            //Reduce input size so it doesn't overlap with buttons
+            chatInput.style.paddingRight = (.5+toolsHolder.childElementCount*3)+"rem";
+        });
+        //Capture click on "chat" button to override its behavior
+        submitBt.addEventListener("click", e=>{ onSubmit(e); });
+    }
 
     function addStyles() {
         const styleTag = document.createElement("style");
@@ -173,32 +201,39 @@
      */
 	function addToggle() {
         let darkMode = document.getElementsByTagName('html')[0].className.indexOf("theme-dark") > -1;
-        let img = document.createElement("img");
-        img.src = darkMode? unlockWhite : unlockBlack;
-        img.width = 20;
-        img.height = 20;
+        toggleButtonImg = document.createElement("img");
+        toggleButtonImg.src = darkMode? unlockWhite : unlockBlack;
+        toggleButtonImg.width = 20;
+        toggleButtonImg.height = 20;
 
         toggleButton = toolsHolder.firstElementChild.cloneNode(true);
         let svg = toggleButton.querySelector("svg");
         let p = svg.parentElement;
         p.removeChild(svg);
-        p.appendChild(img);
+        p.appendChild(toggleButtonImg);
 
         toolsHolder.appendChild(toggleButton);
         //Toggle lock/ublock
-        toggleButton.addEventListener("click", e => {
-            cypherEnabled = !cypherEnabled;
-            let l = darkMode? lockWhite : lockBlack;
-            let ul = darkMode? unlockWhite : unlockBlack;
-            img.src = cypherEnabled? l : ul;
-            if(cypherEnabled) {
-                chatInput.classList.add("cypherEnabled");
-            }else{
-                chatInput.classList.remove("cypherEnabled");
-                alertDiv.style.display = "none";
-            }
-        });
+        toggleButton.addEventListener("click", e => toggleCyphering());
 	}
+
+    function toggleCyphering(force) {
+        if(force !== undefined) {
+            cypherEnabled = force;
+        }else{
+            cypherEnabled = !cypherEnabled;
+        }
+        let darkMode = document.getElementsByTagName('html')[0].className.indexOf("theme-dark") > -1;
+        let l = darkMode? lockWhite : lockBlack;
+        let ul = darkMode? unlockWhite : unlockBlack;
+        toggleButtonImg.src = cypherEnabled? l : ul;
+        if(cypherEnabled) {
+            chatInput.classList.add("cypherEnabled");
+        }else{
+            chatInput.classList.remove("cypherEnabled");
+            alertDiv.style.display = "none";
+        }
+    }
 
     /**
      * Add alert holder displayed if encrypted message is too long for twitch
@@ -214,9 +249,9 @@
      * Add init form to request cypher key
      */
     function addInitForm() {
-        var form = document.createElement("div");
-        form.className = "configForm";
-        form.innerHTML = `
+        initForm = document.createElement("div");
+        initForm.className = "configForm";
+        initForm.innerHTML = `
         <div class="title">Configure le clavier de chiffrement</div>
         <div class="config">
             <input type="text" placeholder="Clef de cryptage..." id="cypherKeyboardInput">
@@ -224,9 +259,9 @@
         </div>
         <div class="error" id="cypherKeyboardError">La clef doit faire au minimum ${cypherKeyMinLength} caractères</div>
         `;
-        alertHolder.appendChild(form);
-        let input = form.querySelector("#cypherKeyboardInput");
-        let submit = form.querySelector("#cypherKeyboardSubmit");
+        alertHolder.appendChild(initForm);
+        let input = initForm.querySelector("#cypherKeyboardInput");
+        let submit = initForm.querySelector("#cypherKeyboardSubmit");
         submit.addEventListener("click", (e)=> { saveCypherKey() });
         input.addEventListener("keyup", (e)=> { if(e.key == "Enter") saveCypherKey() });
     }
