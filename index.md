@@ -14,3 +14,9 @@ Une fois la clef secrète configurée, une icône de cadenas apparaîtra sur la 
 En cliquant dessus le chiffrement sera activé et tes messages deviendront lisibles uniquement aux personnes ayant aussi installé le clavier et configuré la même clef secrète
 
 <div align="center"><img src="https://raw.githubusercontent.com/Durss/TwitchCypherKeyboard/main/demo.gif" alt="demo" /></div>
+
+## Réinitialiser
+Si tu souhaites changer de clef secrète il te suffit d'envoyer le message suivant :
+```
+!resetCypherKeyboard
+```
