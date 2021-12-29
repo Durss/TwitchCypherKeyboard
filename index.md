@@ -1,3 +1,6 @@
+Cette extension te permet d'envoyer des messages secrets dans un chat Twitch.
+Si tu as configuré la même clef secrète qu'une autre personne possédant l'extension, tu pourras lui envoyer des messages que seule elle sera en mesure de lire.
+
 ## Installation
 Si tu es sur **Chrome, Edge, Vivaldi, Opera, Brave**, installe [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)\
 Si tu es sur **Firefox**, installe [Greasemonkey](https://addons.mozilla.org/fr/firefox/addon/greasemonkey/)\
