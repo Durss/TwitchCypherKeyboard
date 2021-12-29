@@ -1,9 +1,7 @@
-<center>
-<img src="https://durss.github.io/TwitchCypherKeyboard/share_small.png?v=1" align="center">
-</center>
+<img src="https://durss.github.io/TwitchCypherKeyboard/share_small.png?v=1" class="logo">
 
-Cette extension te permet d'envoyer des messages secrets dans un chat Twitch.
-Si tu as configuré la même clef secrète qu'une autre personne possédant l'extension, tu pourras lui envoyer des messages que seule elle sera en mesure de lire.
+<p class="intro">Cette extension te permet d'envoyer des messages secrets dans un chat Twitch.
+Si tu as configuré la même clef secrète qu'une autre personne possédant l'extension, tu pourras lui envoyer des messages que seule elle sera en mesure de lire.</p>
 
 ## Installation
 Si tu es sur **Chrome, Edge, Vivaldi, Opera, Brave**, installe [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)\
