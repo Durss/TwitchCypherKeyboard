@@ -4,10 +4,13 @@
 // @description Allows to send cyphered messages on any Twitch chat
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.5
+// @downloadURL https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
+// @version     1.6
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
+// @grant       GM.getValue
+// @grant       GM.setValue
 // ==/UserScript==
 
 
@@ -15,6 +18,7 @@
     let cypherEnabled = false;
     let toolsHolder = null;
     let alertHolder = null;
+    let resultHolder = null;
     let toggleButton = null;
     let toggleButtonImg = null;
     let initForm = null;
@@ -22,10 +26,10 @@
     let chatInput = null;
     let chatMessages = null;
     let submitBt = null;
-    let allowEvent = false;
     let cypherKey = null;
     let cypherKeyMinLength = 10;
     let listenersAdded = false;
+    let cypheredMessage = "";
     let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=";
     let charsReplacements = "‒–—―ꟷ‖⸗ⱶ⌠⌡─ꞁ│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╨╧╩╪╫╬▬ɭƖſ∏¦|[]¯‗∟≡₸";
     let lockBlack = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9JzMwMHB4JyB3aWR0aD0nMzAwcHgnICBmaWxsPSIjMDAwMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwIDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTcxLjA5MSwzMy42MDd2LTkuOTFjMC03LjI2My02LjY3NC0xOC4wMTEtMjAuOTktMTguMDExaC0wLjIwNWMtMTQuMzE1LDAtMjAuOTg2LDEwLjc0OC0yMC45ODYsMTguMDExdjkuOTEgIGMtNS4yOTEsMC44NDctOS4zNDEsNS40MjItOS4zNDEsMTAuOTUydjM4LjY1YzAsNi4xMzMsNC45NzIsMTEuMTA0LDExLjEwNiwxMS4xMDRoMzguNjQ2YzYuMTM1LDAsMTEuMTA4LTQuOTcyLDExLjEwOC0xMS4xMDRWNDQuNTYgIEM4MC40MzEsMzkuMDMsNzYuMzgyLDM0LjQ1NCw3MS4wOTEsMzMuNjA3eiBNNTQuODgzLDcyLjU2NGMwLjAxNywwLjA0MSwwLjAyMSwwLjA4OSwwLjAyMSwwLjEzYzAsMC4yMTEtMC4xNjMsMC4zNzgtMC4zNzMsMC4zNzggIGMtMC4wMDIsMC0wLjAwNywwLTAuMDExLDBoLTkuMDRjLTAuMTEsMC0wLjIwOC0wLjA0Ny0wLjI3OS0wLjEyNGMtMC4wNzUtMC4wODItMC4xMDYtMC4xODgtMC4wOTUtMC4yOTVsMC44NjQtNy4zNzcgIGMtMS4xNDctMS4wNzctMS44NjktMi42MDUtMS44NjktNC4zMDJjMC0zLjI2MSwyLjY0LTUuOTAyLDUuODk5LTUuOTAyYzMuMjU5LDAsNS45MDEsMi42NDIsNS45MDEsNS45MDIgIGMwLDEuNjk2LTAuNzIyLDMuMjE5LTEuODY4LDQuMzAyTDU0Ljg4Myw3Mi41NjR6IE0zNS41OTQsMzMuNDU2di05Ljc1OGMwLTMuNTQ4LDMuNjA1LTExLjMyOCwxNC4zMDMtMTEuMzI4aDAuMjA1ICBjMTAuNzAzLDAsMTQuMzA1LDcuNzgsMTQuMzA1LDExLjMyOHY5Ljc1OEgzNS41OTR6Ij48L3BhdGg+PC9zdmc+";
@@ -34,7 +38,7 @@
     let unlockWhite = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9JzMwMHB4JyB3aWR0aD0nMzAwcHgnICBmaWxsPSIjRkZGRkZGIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwIDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTMzLjcsNDEuNkwzMSwzMy4xYy0xLjMtMy44LTEuMS03LjcsMC44LTExLjRjMS45LTMuNCw1LTYuMSw4LjktNy4zYzMuNy0xLjMsNy44LTAuOSwxMS4zLDEuMWMzLjYsMS44LDYuMSw0LjksNy40LDguNyAgYzAuOCwyLjIsMi45LDMuNCw1LjMsMi43YzIuMy0wLjcsMy43LTMuMSwzLTUuNGMtMi01LjktNi4xLTEwLjgtMTEuOC0xMy44Yy01LjUtMi44LTExLjktMy40LTE3LjktMS41Yy02LjEsMS45LTExLDYuMS0xNCwxMS43ICBjLTIuOCw1LjQtMy4zLDExLjktMS41LDE3LjlsMiw2LjNjLTQuOSwxLjctOC41LDYuMi04LjUsMTEuNnYyOS4xYzAsNi44LDUuNCwxMi4xLDEyLjEsMTIuMWg0My4zYzYuNSwwLDEyLjEtNS4zLDEyLjEtMTIuMVY1My42ICBjMC02LjYtNS42LTEyLjEtMTIuMS0xMi4xSDMzLjd6IE01Mi4zLDgxLjRjMCwxLjMtMSwyLjQtMi4yLDIuNGMtMS4zLDAtMi41LTEtMi41LTIuNFY2OC45Yy0yLjktMS00LjktMy42LTQuOS02LjkgIGMwLTMuOCwzLjMtNy4xLDcuNC03LjFjMy44LDAsNywzLjMsNyw3LjFjMCwzLjMtMiw1LjktNC44LDYuOVY4MS40eiI+PC9wYXRoPjwvc3ZnPg==";
 
 	async function buildDOM () {
-        cypherKey = GM_getValue("cypherKey");
+        cypherKey = GM_getValue? GM_getValue("cypherKey") : GM.getValue("cypherKey");
 
         initPointers();
         addStyles();
@@ -42,6 +46,7 @@
         if(cypherKey) {
             addToggle();
             addMaxLength();
+            addResultForm();
 
             if(!listenersAdded) {
                 initChatWatcher();
@@ -80,22 +85,14 @@
     function initPointers() {
         toolsHolder = document.querySelector("[data-a-target='emote-picker-button']").parentElement.parentElement;
         alertHolder = document.querySelector("[data-test-selector='chat-input-buttons-container']").parentElement.firstChild.firstChild;
-        chatInput = document.querySelector("[data-a-target='chat-input']");
         chatMessages = document.querySelector("[data-test-selector='chat-scrollable-area__message-container']");
         submitBt = document.querySelector("[data-a-target='chat-send-button']");
     }
 
     function initChatInputListeners() {
-        chatInput.addEventListener("keydown", e=> {
-            if(e.key == "Enter") onSubmit(e);
+        document.body.addEventListener("keyup", e=> {
+            onKeyboardEvent(e);
         }, true);
-
-        chatInput.addEventListener("focus", e=>{
-            //Reduce input size so it doesn't overlap with buttons
-            chatInput.style.paddingRight = (.5+toolsHolder.childElementCount*3)+"rem";
-        });
-        //Capture click on "chat" button to override its behavior
-        submitBt.addEventListener("click", e=>{ onSubmit(e); });
     }
 
     function addStyles() {
@@ -122,17 +119,23 @@
                 background-image: repeating-linear-gradient(145deg, #444, #444 30px, #555 30px, #555 60px);
             }
 
-            .configForm {
+            .configForm,
+            .resultHolder {
                 text-align:center;
                 padding: 10px;
                 padding-bottom: 20px;
                 width:min-content;
+                max-width:100%;
                 margin:auto;
                 border-top-left-radius:5px;
                 border-top-right-radius:5px;
                 background-color:var(--color-background-input);
             }
-            .configForm>.title {
+            .resultHolder {
+                width: 100%;
+            }
+            .configForm>.title,
+            .resultHolder>.title {
                 color: var(--color-text-alt) !important;
                 font-size: var(--font-size-5) !important;
                 word-break: break-word !important;
@@ -142,9 +145,14 @@
                 margin-bottom:10px;
             }
 
-            .config {
+            .config,
+            .result {
                 display:flex;
                 justify-content:center;
+            }
+
+            .result {
+                flex-direction: column;
             }
 
             .error {
@@ -171,7 +179,8 @@
                 color:var(--color-text-button-secondary-hover);
             }
 
-            .config>input[type="submit"] {
+            .config>input[type="submit"],
+            .result>input[type="submit"] {
                 border:none;
                 padding: 0 10px;
                 background-color: var(--color-background-button-primary-default);
@@ -191,6 +200,16 @@
                 border-radius: var(--border-radius-medium);
                 font-size: var(--button-text-default);
                 height: var(--button-size-default);
+            }
+
+            #cypherKeyboardResultInput {
+                display:block;
+            }
+
+            #cypherKeyboardCopy {
+                width: min-content;
+                margin: auto;
+                margin-top:10px;
             }
         `;
         document.querySelector("head").append(styleTag);
@@ -228,10 +247,11 @@
         let ul = darkMode? unlockWhite : unlockBlack;
         toggleButtonImg.src = cypherEnabled? l : ul;
         if(cypherEnabled) {
-            chatInput.classList.add("cypherEnabled");
+            resultHolder.style.display = "block";
+            onKeyboardEvent(null);
         }else{
-            chatInput.classList.remove("cypherEnabled");
             alertDiv.style.display = "none";
+            resultHolder.style.display = "none";
         }
     }
 
@@ -266,17 +286,63 @@
         input.addEventListener("keyup", (e)=> { if(e.key == "Enter") saveCypherKey() });
     }
 
+    /**
+     * Add init form to request cypher key
+     */
+    function addResultForm() {
+        resultHolder = document.createElement("div");
+        resultHolder.className = "resultHolder";
+        resultHolder.innerHTML = `
+        <div class="title">Ecris ton message, la version chiffrée apparaîtra ci-dessous</div>
+        <div class="result">
+            <div id="cypherKeyboardResultInput"></div>
+            <input type="submit" value="Copy" id="cypherKeyboardCopy">
+        </div>
+        `;
+        resultHolder.style.display = "none";
+        alertHolder.appendChild(resultHolder);
+        let input = resultHolder.querySelector("#cypherKeyboardResultInput");
+        let submit = resultHolder.querySelector("#cypherKeyboardCopy");
+        submit.addEventListener("click", (e)=> { copyCyphered() });
+        input.addEventListener("keyup", (e)=> { if(e.key == "Enter") saveCypherKey() });
+    }
+
     function saveCypherKey() {
         document.querySelector("#cypherKeyboardError").style.display = "none";
         let input = document.querySelector("#cypherKeyboardInput");
         let value = input.value.trim();
         if(value.length > cypherKeyMinLength) {
-            GM_setValue("cypherKey", value);
+            if(GM_setValue) {
+				GM_setValue("cypherKey", value);
+			}else{
+				GM.setValue("cypherKey", value);
+			}
             alertHolder.innerHTML = "";
             buildDOM();
         }else{
             document.querySelector("#cypherKeyboardError").style.display = "block";
         }
+    }
+
+    async function copyCyphered() {
+		const el = document.createElement('textarea');
+		el.value = cypheredMessage;
+		el.setAttribute('readonly', '');
+		el.style.position = 'absolute';
+		el.style.left = '-9999px';
+		document.body.appendChild(el);
+		const sel = document.getSelection();
+		const selected =
+			sel && sel.rangeCount > 0
+				? document.getSelection()?.getRangeAt(0)
+				: false;
+		el.select();
+		document.execCommand('copy');
+		document.body.removeChild(el);
+		if (selected && sel) {
+			sel.removeAllRanges();
+			sel.addRange(selected);
+		}
     }
 
     function initChatWatcher() {
@@ -303,55 +369,47 @@
         }, false);
     }
 
-    function setReactValue(element, value) {
-        const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
-        const prototype = Object.getPrototypeOf(element);
-        const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
-
-        if (valueSetter && valueSetter !== prototypeValueSetter) {
-            prototypeValueSetter.call(element, value);
-        } else {
-            valueSetter.call(element, value);
-        }
-        element.dispatchEvent(new Event('input', {bubbles:true}));
-    }
-
-    async function onSubmit(e) {
+    async function onKeyboardEvent(e) {
         alertDiv.style.display = "none";
+        chatInput = document.querySelector("[data-a-target='chat-input-text']");
+        const message = chatInput.innerText.trim();
+        cypheredMessage = "";
 
-        if(chatInput.value.toLowerCase() == "!resetcypherkeyboard") {
-            GM_setValue("cypherKey", null);
-            cypherEnabled = false;
-            e.preventDefault();
-            e.stopPropagation();
-            chatInput.classList.remove("cypherEnabled");
-            toggleButton.parentElement.removeChild(toggleButton);
-            alertDiv.parentElement.removeChild(alertDiv);
-            setReactValue(chatInput, "");
-            buildDOM();
+        if(message.Length > 0 && message.toLowerCase() == "!resetcypherkeyboard") {
+            if(GM_setValue) {
+                GM_setValue("cypherKey", null);
+            }else{
+                GM.setValue("cypherKey", null);
+            }
+
+            if(cypherEnabled) {
+                cypherEnabled = false;
+                e.preventDefault();
+                e.stopPropagation();
+                //chatInput.classList.remove("cypherEnabled");
+                toggleButton.parentElement.removeChild(toggleButton);
+                alertDiv.parentElement.removeChild(alertDiv);
+                buildDOM();
+            }
             return;
         }
 
-        if(!cypherEnabled) return;
-
-        if(!allowEvent) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            allowEvent = true;
-            let newValue = await encrypt(chatInput.value);
+        if(cypherEnabled && message.length > 0) {
+            let newValue = await encrypt(message);
             if(newValue.length >= 500) {
                 alertDiv.style.display = "block";
-                allowEvent = false;
             }else{
-                //Override input's value at react's level and fire a new input event
-                setReactValue(chatInput, newValue);
-                //Tell react to resubmit input
-                chatInput.dispatchEvent(new KeyboardEvent('keydown', {code:"Enter", keyCode:13, which:13, key:"Enter", bubbles:true}));
+                cypheredMessage = newValue;
+                let input = resultHolder.querySelector("#cypherKeyboardResultInput");
+                input.innerText = newValue;
             }
         }else{
-            allowEvent = false;
+            let input = resultHolder.querySelector("#cypherKeyboardResultInput");
+            input.innerText = "";
         }
+
+        const copyBt = document.querySelector("#cypherKeyboardCopy");
+        copyBt.style.display = cypheredMessage.length > 0? "block" : "none";
     }
 
     const buff_to_base64 = (buff) => btoa(String.fromCharCode.apply(null, buff));
