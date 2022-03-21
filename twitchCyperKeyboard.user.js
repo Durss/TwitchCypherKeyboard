@@ -38,7 +38,7 @@
     let unlockWhite = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9JzMwMHB4JyB3aWR0aD0nMzAwcHgnICBmaWxsPSIjRkZGRkZGIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwIDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTMzLjcsNDEuNkwzMSwzMy4xYy0xLjMtMy44LTEuMS03LjcsMC44LTExLjRjMS45LTMuNCw1LTYuMSw4LjktNy4zYzMuNy0xLjMsNy44LTAuOSwxMS4zLDEuMWMzLjYsMS44LDYuMSw0LjksNy40LDguNyAgYzAuOCwyLjIsMi45LDMuNCw1LjMsMi43YzIuMy0wLjcsMy43LTMuMSwzLTUuNGMtMi01LjktNi4xLTEwLjgtMTEuOC0xMy44Yy01LjUtMi44LTExLjktMy40LTE3LjktMS41Yy02LjEsMS45LTExLDYuMS0xNCwxMS43ICBjLTIuOCw1LjQtMy4zLDExLjktMS41LDE3LjlsMiw2LjNjLTQuOSwxLjctOC41LDYuMi04LjUsMTEuNnYyOS4xYzAsNi44LDUuNCwxMi4xLDEyLjEsMTIuMWg0My4zYzYuNSwwLDEyLjEtNS4zLDEyLjEtMTIuMVY1My42ICBjMC02LjYtNS42LTEyLjEtMTIuMS0xMi4xSDMzLjd6IE01Mi4zLDgxLjRjMCwxLjMtMSwyLjQtMi4yLDIuNGMtMS4zLDAtMi41LTEtMi41LTIuNFY2OC45Yy0yLjktMS00LjktMy42LTQuOS02LjkgIGMwLTMuOCwzLjMtNy4xLDcuNC03LjFjMy44LDAsNywzLjMsNyw3LjFjMCwzLjMtMiw1LjktNC44LDYuOVY4MS40eiI+PC9wYXRoPjwvc3ZnPg==";
 
 	async function buildDOM () {
-        cypherKey = GM_getValue? GM_getValue("cypherKey") : GM.getValue("cypherKey");
+        cypherKey = GM && GM.getValue? await GM.getValue("cypherKey") : GM_getValue("cypherKey");
 
         initPointers();
         addStyles();
@@ -307,15 +307,15 @@
         input.addEventListener("keyup", (e)=> { if(e.key == "Enter") saveCypherKey() });
     }
 
-    function saveCypherKey() {
+    async function saveCypherKey() {
         document.querySelector("#cypherKeyboardError").style.display = "none";
         let input = document.querySelector("#cypherKeyboardInput");
         let value = input.value.trim();
         if(value.length > cypherKeyMinLength) {
-            if(GM_setValue) {
-				GM_setValue("cypherKey", value);
+            if(GM && GM.setValue) {
+				await GM.setValue("cypherKey", value);
 			}else{
-				GM.setValue("cypherKey", value);
+				GM_setValue("cypherKey", value);
 			}
             alertHolder.innerHTML = "";
             buildDOM();
@@ -376,10 +376,10 @@
         cypheredMessage = "";
 
         if(message.Length > 0 && message.toLowerCase() == "!resetcypherkeyboard") {
-            if(GM_setValue) {
-                GM_setValue("cypherKey", null);
+            if(GM && GM.setValue) {
+                await GM.setValue("cypherKey", null);
             }else{
-                GM.setValue("cypherKey", null);
+                GM_setValue("cypherKey", null);
             }
 
             if(cypherEnabled) {
