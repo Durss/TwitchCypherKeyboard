@@ -5,12 +5,13 @@
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
 // @downloadURL https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.7
+// @version     1.8
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM.getValue
 // @grant       GM.setValue
+// @grant       GM_addStyle
 // ==/UserScript==
 
 
@@ -40,7 +41,7 @@
 	async function buildDOM () {
         cypherKey = GM && GM.getValue? await GM.getValue("cypherKey") : GM_getValue("cypherKey");
 
-        initPointers();
+        await initPointers();
         addStyles();
 
         if(cypherKey) {
@@ -82,11 +83,19 @@
         */
 	}
 
-    function initPointers() {
-        toolsHolder = document.querySelector("[data-a-target='emote-picker-button']").parentElement.parentElement;
-        alertHolder = document.querySelector("[data-test-selector='chat-input-buttons-container']").parentElement.firstChild.firstChild;
-        chatMessages = document.querySelector("[data-test-selector='chat-scrollable-area__message-container']");
-        submitBt = document.querySelector("[data-a-target='chat-send-button']");
+    async function initPointers() {
+      	return new Promise((resolve, reject)=> {
+          const interv = setInterval(()=> {
+            if(document.querySelector("[data-a-target='emote-picker-button']")) {
+              toolsHolder = document.querySelector("[data-a-target='emote-picker-button']").parentElement.parentElement;
+              alertHolder = document.querySelector("[data-test-selector='chat-input-buttons-container']").parentElement.firstChild.firstChild;
+              chatMessages = document.querySelector("[data-test-selector='chat-scrollable-area__message-container']");
+              submitBt = document.querySelector("[data-a-target='chat-send-button']");
+              clearInterval(interv);
+              resolve();
+            }
+          }, 30);
+        });
     }
 
     function initChatInputListeners() {
@@ -181,6 +190,7 @@
 
             .config>input[type="submit"],
             .result>input[type="submit"] {
+								cursor:pointer;
                 border:none;
                 padding: 0 10px;
                 background-color: var(--color-background-button-primary-default);
@@ -372,8 +382,12 @@
     async function onKeyboardEvent(e) {
         alertDiv.style.display = "none";
         chatInput = document.querySelector("[data-a-target='chat-input-text']");
-        const message = chatInput.innerText.trim();
+    		if(!chatInput) {
+    			chatInput = document.querySelector("[data-a-target='chat-input']");
+    		}
+        const message = chatInput.value ? chatInput.value : chatInput.innerText.trim();
         cypheredMessage = "";
+    console.log(message);
 
         if(message.Length > 0 && message.toLowerCase() == "!resetcypherkeyboard") {
             if(GM && GM.setValue) {
