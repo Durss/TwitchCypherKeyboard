@@ -306,7 +306,7 @@
         <div class="title">Ecris ton message, la version chiffrée apparaîtra ci-dessous</div>
         <div class="result">
             <div id="cypherKeyboardResultInput"></div>
-            <input type="submit" value="Copy" id="cypherKeyboardCopy">
+            <input type="submit" value="Copier" id="cypherKeyboardCopy">
         </div>
         `;
         resultHolder.style.display = "none";
