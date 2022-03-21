@@ -5,7 +5,7 @@
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
 // @downloadURL https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.6
+// @version     1.7
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
