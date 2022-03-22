@@ -5,7 +5,7 @@
 // @include     https://www.twitch.tv/*
 // @updateURL   https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
 // @downloadURL https://github.com/Durss/TwitchCypherKeyboard/raw/main/twitchCyperKeyboard.user.js
-// @version     1.8
+// @version     1.9
 // @author      Durss
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -31,6 +31,7 @@
     let cypherKeyMinLength = 10;
     let listenersAdded = false;
     let cypheredMessage = "";
+    let keyDebounce;
     let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=";
     let charsReplacements = "‒–—―ꟷ‖⸗ⱶ⌠⌡─ꞁ│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╨╧╩╪╫╬▬ɭƖſ∏¦|[]¯‗∟≡₸";
     let lockBlack = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9JzMwMHB4JyB3aWR0aD0nMzAwcHgnICBmaWxsPSIjMDAwMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwIDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTcxLjA5MSwzMy42MDd2LTkuOTFjMC03LjI2My02LjY3NC0xOC4wMTEtMjAuOTktMTguMDExaC0wLjIwNWMtMTQuMzE1LDAtMjAuOTg2LDEwLjc0OC0yMC45ODYsMTguMDExdjkuOTEgIGMtNS4yOTEsMC44NDctOS4zNDEsNS40MjItOS4zNDEsMTAuOTUydjM4LjY1YzAsNi4xMzMsNC45NzIsMTEuMTA0LDExLjEwNiwxMS4xMDRoMzguNjQ2YzYuMTM1LDAsMTEuMTA4LTQuOTcyLDExLjEwOC0xMS4xMDRWNDQuNTYgIEM4MC40MzEsMzkuMDMsNzYuMzgyLDM0LjQ1NCw3MS4wOTEsMzMuNjA3eiBNNTQuODgzLDcyLjU2NGMwLjAxNywwLjA0MSwwLjAyMSwwLjA4OSwwLjAyMSwwLjEzYzAsMC4yMTEtMC4xNjMsMC4zNzgtMC4zNzMsMC4zNzggIGMtMC4wMDIsMC0wLjAwNywwLTAuMDExLDBoLTkuMDRjLTAuMTEsMC0wLjIwOC0wLjA0Ny0wLjI3OS0wLjEyNGMtMC4wNzUtMC4wODItMC4xMDYtMC4xODgtMC4wOTUtMC4yOTVsMC44NjQtNy4zNzcgIGMtMS4xNDctMS4wNzctMS44NjktMi42MDUtMS44NjktNC4zMDJjMC0zLjI2MSwyLjY0LTUuOTAyLDUuODk5LTUuOTAyYzMuMjU5LDAsNS45MDEsMi42NDIsNS45MDEsNS45MDIgIGMwLDEuNjk2LTAuNzIyLDMuMjE5LTEuODY4LDQuMzAyTDU0Ljg4Myw3Mi41NjR6IE0zNS41OTQsMzMuNDU2di05Ljc1OGMwLTMuNTQ4LDMuNjA1LTExLjMyOCwxNC4zMDMtMTEuMzI4aDAuMjA1ICBjMTAuNzAzLDAsMTQuMzA1LDcuNzgsMTQuMzA1LDExLjMyOHY5Ljc1OEgzNS41OTR6Ij48L3BhdGg+PC9zdmc+";
@@ -188,6 +189,10 @@
                 color:var(--color-text-button-secondary-hover);
             }
 
+            [data-a-target="chat-input"] {
+                padding-right: 9.5rem !important;
+            }
+
             .config>input[type="submit"],
             .result>input[type="submit"] {
 								cursor:pointer;
@@ -214,12 +219,26 @@
 
             #cypherKeyboardResultInput {
                 display:block;
+                word-break: break-all;
             }
 
             #cypherKeyboardCopy {
                 width: min-content;
                 margin: auto;
                 margin-top:10px;
+            }
+
+            #cypherKeyboardProgress {
+                background-color: var(--color-text-button-primary);
+                color: var(--color-background-button-primary-default);
+                border-radius: 4px;
+                opacity:.5;
+                margin: auto;
+                margin-top:5px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-left: var(--button-padding-x);
+                padding-right: var(--button-padding-x);
             }
         `;
         document.querySelector("head").append(styleTag);
@@ -307,6 +326,7 @@
         <div class="result">
             <div id="cypherKeyboardResultInput"></div>
             <input type="submit" value="Copier" id="cypherKeyboardCopy">
+            <div id="cypherKeyboardProgress">chiffrage en cours...</div>
         </div>
         `;
         resultHolder.style.display = "none";
@@ -380,14 +400,26 @@
     }
 
     async function onKeyboardEvent(e) {
+        const copyBt = document.querySelector("#cypherKeyboardCopy");
+        const progress = document.querySelector("#cypherKeyboardProgress");
+        if(copyBt) {
+            progress.style.display = "block";
+            copyBt.style.display = "none";
+        }
+        clearTimeout(keyDebounce);
+        keyDebounce = setTimeout(() => startCypher(), 150);
+    }
+
+    async function startCypher() {
         alertDiv.style.display = "none";
+        const copyBt = document.querySelector("#cypherKeyboardCopy");
+        const progress = document.querySelector("#cypherKeyboardProgress");
         chatInput = document.querySelector("[data-a-target='chat-input-text']");
-    		if(!chatInput) {
-    			chatInput = document.querySelector("[data-a-target='chat-input']");
-    		}
+        if(!chatInput) {
+            chatInput = document.querySelector("[data-a-target='chat-input']");
+        }
         const message = chatInput.value ? chatInput.value : chatInput.innerText.trim();
         cypheredMessage = "";
-    console.log(message);
 
         if(message.Length > 0 && message.toLowerCase() == "!resetcypherkeyboard") {
             if(GM && GM.setValue) {
@@ -422,8 +454,10 @@
             input.innerText = "";
         }
 
-        const copyBt = document.querySelector("#cypherKeyboardCopy");
-        copyBt.style.display = cypheredMessage.length > 0? "block" : "none";
+        if(copyBt) {
+            copyBt.style.display = cypheredMessage.length > 0? "block" : "none";
+            progress.style.display = "none";
+        }
     }
 
     const buff_to_base64 = (buff) => btoa(String.fromCharCode.apply(null, buff));
